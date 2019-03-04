@@ -16,7 +16,6 @@ void setup() {
   for(int buttonID = 0; buttonID < MAX_BUTTONS; buttonID++) {
     pinMode(digitalInputID + buttonID, INPUT_PULLUP);
   }
-  Serial.begin(9600);
 }
 
 void loop() {
