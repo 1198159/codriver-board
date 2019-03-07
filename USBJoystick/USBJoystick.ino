@@ -1,15 +1,15 @@
 #include <Joystick.h>
 
-Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, 20, 2, true, true, false, false, false, false, false, false, false, false, false);
+// How many buttons (and digital inputs) we will use.
+const unsigned int MAIN_MAX_BUTTONS = 8;
+
+Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS, 2, true, true, false, false, false, false, false, false, false, false, false);
 
 // Constant for determing which digital input to use.
-const int digitalInputID = 22;
-
-// How many buttons (and digital inputs) we will use.
-const unsigned int MAX_BUTTONS = 8;
+const int mainDigitalInputID = 22;
 
 // Last state of the button
-int lastButtonState[8] = {0,0,0,0,0,0,0,0};
+int mainLastButtonState[8] = {0,0,0,0,0,0,0,0};
 
 // The analog joystick pins.
 int joyPin0 = 0;
@@ -35,8 +35,8 @@ void setup() {
   mainJoystick.begin();
 
   // Initialize button pins
-  for(int buttonID = 0; buttonID < MAX_BUTTONS; buttonID++) {
-    pinMode(digitalInputID + buttonID, INPUT_PULLUP);
+  for(int buttonID = 0; buttonID < MAIN_MAX_BUTTONS; buttonID++) {
+    pinMode(mainDigitalInputID + buttonID, INPUT_PULLUP);
   }
   Serial.begin(9600);
 }
@@ -71,13 +71,13 @@ void loop() {
   mainJoystick.setYAxis(analogToStick(rawYAxisData, midAnalogYVal));
 
   // Read pin values
-  for (int index = 0; index < MAX_BUTTONS; index++)
+  for (int index = 0; index < MAIN_MAX_BUTTONS; index++)
   {
-    int currentButtonState = !digitalRead(index + digitalInputID);
-    if (currentButtonState != lastButtonState[index])
+    int currentButtonState = !digitalRead(index + mainDigitalInputID);
+    if (currentButtonState != mainLastButtonState[index])
     {
       mainJoystick.setButton(index, currentButtonState);
-      lastButtonState[index] = currentButtonState;
+      mainLastButtonState[index] = currentButtonState;
     }
   }
 
