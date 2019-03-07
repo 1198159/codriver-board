@@ -1,7 +1,7 @@
 #include <Joystick.h>
 
 // Arrays for determing which digital inputs each joystick should use.
-int mainDigitalInputs[] = {24, 25, 26, 27, 28, 29, 30, 31, 32, 44};
+int mainDigitalInputs[] = {24, 25, 26, 27, 28, 29, 30, 31, 32, 41, 42, 43, 44};
 int dialDigitalInputs[] = {6, 7, 8, 9, 10, 11, 12, 13, 33, 34, 35, 36, 37, 38, 39, 40};
 
 // How many buttons (and digital inputs) we will use.
@@ -106,9 +106,6 @@ void loop() {
     {
       mainJoystick.setButton(index, currentButtonState);
       mainLastButtonState[index] = currentButtonState;
-      if (mainDigitalInputs[index] >= mainHatDigitalInputID && mainDigitalInputs[index] < mainHatDigitalInputID + 8) {
-        mainJoystick.setHatSwitch(0, 45*(mainDigitalInputs[index] - mainHatDigitalInputID) + 180);
-      }
     }
   }
 
