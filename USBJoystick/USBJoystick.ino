@@ -4,11 +4,11 @@
 const unsigned int MAIN_MAX_BUTTONS = 18;
 const unsigned int DIAL_MAX_BUTTONS = 8;
 
-Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS, 2, true, true, false, false, false, false, false, false, false, false, false);
-Joystick_ dialJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, DIAL_MAX_BUTTONS, 2, false, false, false, false, false, false, false, false, false, false, false);
+Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS, 1, true, true, false, false, false, false, false, false, false, false, false);
+Joystick_ dialJoystick(0x04, JOYSTICK_TYPE_JOYSTICK, DIAL_MAX_BUTTONS, 1, false, false, false, false, false, false, false, false, false, false, false);
 
 // Constant for determing which digital input to use.
-const int mainDigitalInputID = 22;
+const int mainDigitalInputID = 24;
 const int dialDigitalInputID = 6;
 
 // Last state of the button
@@ -29,6 +29,9 @@ int maxAnalogVal = 1023;
 
 int midAnalogXVal = 700;
 int midAnalogYVal = 530;
+
+// Starting hat digital input ID for the main joystick
+int mainHatDigitalInputID = 33;
 
 void setup() {
   // put your setup code here, to run once:
@@ -90,6 +93,9 @@ void loop() {
     {
       mainJoystick.setButton(index, currentButtonState);
       mainLastButtonState[index] = currentButtonState;
+      if (index + mainDigitalInputID >= mainHatDigitalInputID && index + mainDigitalInputID < mainHatDigitalInputID + 8) {
+        mainJoystick.setHatSwitch(0, 45*(mainDigitalInputID + index - mainHatDigitalInputID) + 180);
+      }
     }
   }
 
@@ -100,6 +106,7 @@ void loop() {
     if (currentButtonState != dialLastButtonState[index])
     {
       dialJoystick.setButton(index, currentButtonState);
+      dialJoystick.setHatSwitch(0, 45*index + 180);
       dialLastButtonState[index] = currentButtonState;
     }
   }
