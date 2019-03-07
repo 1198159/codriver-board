@@ -1,7 +1,7 @@
 #include <Joystick.h>
 
 // How many buttons (and digital inputs) we will use.
-const unsigned int MAIN_MAX_BUTTONS = 8;
+const unsigned int MAIN_MAX_BUTTONS = 18;
 
 Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS, 2, true, true, false, false, false, false, false, false, false, false, false);
 
@@ -9,7 +9,7 @@ Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS, 2, true, 
 const int mainDigitalInputID = 22;
 
 // Last state of the button
-int mainLastButtonState[8] = {0,0,0,0,0,0,0,0};
+int mainLastButtonState[18] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 // The analog joystick pins.
 int joyPin0 = 0;
