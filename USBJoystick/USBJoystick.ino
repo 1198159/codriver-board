@@ -1,12 +1,15 @@
 #include <Joystick.h>
 
-//https://github.com/LordNuke/ArduinoLibs/blob/master/Joystick/examples/JSTest/JSTest.ino
+Joystick_ Joystick(0x03, JOYSTICK_TYPE_JOYSTICK, 20, 2, true, true, false, false, false, false, false, false, false, false, false);
 
 // Constant for determing which digital input to use.
 const int digitalInputID = 22;
 
 // How many buttons (and digital inputs) we will use.
 const unsigned int MAX_BUTTONS = 8;
+
+// Last state of the button
+int lastButtonState[8] = {0,0,0,0,0,0,0,0};
 
 // The analog joystick pins.
 int joyPin0 = 0;
@@ -25,7 +28,11 @@ int midAnalogYVal = 530;
 
 void setup() {
   // put your setup code here, to run once:
-  Joystick.clearState();
+
+  // Initialize Joystick Library
+  Joystick.setXAxisRange(minAxisVal, maxAxisVal);
+  Joystick.setYAxisRange(minAxisVal, maxAxisVal);
+  Joystick.begin();
 
   // Initialize button pins
   for(int buttonID = 0; buttonID < MAX_BUTTONS; buttonID++) {
@@ -55,24 +62,24 @@ int analogToStick(int rawData, int midVal) {
 }
 void loop() {
   // put your main code here, to run repeatedly:
-  Joystick.clearState();
   
   // Set the joystick state
   int rawXAxisData = analogRead(joyPin0);
-  Joystick.state.x.axis = analogToStick(rawXAxisData, midAnalogXVal);
+  Joystick.setXAxis(analogToStick(rawXAxisData, midAnalogXVal));
 
   int rawYAxisData = analogRead(joyPin1);
-  Joystick.state.y.axis = analogToStick(rawYAxisData, midAnalogYVal);
+  Joystick.setYAxis(analogToStick(rawYAxisData, midAnalogYVal));
 
-  // Set the joystick buttons according to the respective IDs
-  for(int buttonID = 0; buttonID < MAX_BUTTONS; buttonID++) {
-    setButton(buttonID, digitalInputID + buttonID);
+  // Read pin values
+  for (int index = 0; index < MAX_BUTTONS; index++)
+  {
+    int currentButtonState = !digitalRead(index + digitalInputID);
+    if (currentButtonState != lastButtonState[index])
+    {
+      Joystick.setButton(index, currentButtonState);
+      lastButtonState[index] = currentButtonState;
+    }
   }
 
-  Joystick.sendState();
   delay(50);
-}
-
-void setButton(int buttonID, int inputID) {
-  Joystick.state.buttons.bitfield |= (!digitalRead(inputID) << buttonID);
 }
