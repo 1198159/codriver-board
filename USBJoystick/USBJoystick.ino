@@ -1,15 +1,15 @@
 #include <Joystick.h>
 
+// Arrays for determing which digital inputs each joystick should use.
+int mainDigitalInputs[] = {24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 44};
+int dialDigitalInputs[] = {6, 7, 8, 9, 10, 11, 12, 13};
+
 // How many buttons (and digital inputs) we will use.
-const unsigned int MAIN_MAX_BUTTONS = 18;
-const unsigned int DIAL_MAX_BUTTONS = 8;
+const unsigned int MAIN_MAX_BUTTONS = sizeof(mainDigitalInputs)/sizeof(int);
+const unsigned int DIAL_MAX_BUTTONS = sizeof(dialDigitalInputs)/sizeof(int);
 
 Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS, 1, true, true, false, false, false, false, false, false, false, false, false);
 Joystick_ dialJoystick(0x04, JOYSTICK_TYPE_JOYSTICK, DIAL_MAX_BUTTONS, 1, false, false, false, false, false, false, false, false, false, false, false);
-
-// Arrays for determing which digital inputs each joystick should use.
-int mainDigitalInputs[] = {24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 44};
-const int dialDigitalInputs[] = {6, 7, 8, 9, 10, 11, 12, 13};
 
 // Last state of the button
 int *mainLastButtonState;
