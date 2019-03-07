@@ -2,14 +2,18 @@
 
 // How many buttons (and digital inputs) we will use.
 const unsigned int MAIN_MAX_BUTTONS = 18;
+const unsigned int DIAL_MAX_BUTTONS = 8;
 
 Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS, 2, true, true, false, false, false, false, false, false, false, false, false);
+Joystick_ dialJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, DIAL_MAX_BUTTONS, 2, false, false, false, false, false, false, false, false, false, false, false);
 
 // Constant for determing which digital input to use.
 const int mainDigitalInputID = 22;
+const int dialDigitalInputID = 6;
 
 // Last state of the button
 int mainLastButtonState[18] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int dialLastButtonState[8] = {0,0,0,0,0,0,0,0};
 
 // The analog joystick pins.
 int joyPin0 = 0;
@@ -34,9 +38,17 @@ void setup() {
   mainJoystick.setYAxisRange(minAxisVal, maxAxisVal);
   mainJoystick.begin();
 
+  dialJoystick.setXAxisRange(minAxisVal, maxAxisVal);
+  dialJoystick.setYAxisRange(minAxisVal, maxAxisVal);
+  dialJoystick.begin();
+
   // Initialize button pins
   for(int buttonID = 0; buttonID < MAIN_MAX_BUTTONS; buttonID++) {
     pinMode(mainDigitalInputID + buttonID, INPUT_PULLUP);
+  }
+  
+  for(int buttonID = 0; buttonID < DIAL_MAX_BUTTONS; buttonID++) {
+    pinMode(dialDigitalInputID + buttonID, INPUT_PULLUP);
   }
   Serial.begin(9600);
 }
@@ -70,7 +82,7 @@ void loop() {
   int rawYAxisData = analogRead(joyPin1);
   mainJoystick.setYAxis(analogToStick(rawYAxisData, midAnalogYVal));
 
-  // Read pin values
+  // Read pin values for the main joystick
   for (int index = 0; index < MAIN_MAX_BUTTONS; index++)
   {
     int currentButtonState = !digitalRead(index + mainDigitalInputID);
@@ -78,6 +90,17 @@ void loop() {
     {
       mainJoystick.setButton(index, currentButtonState);
       mainLastButtonState[index] = currentButtonState;
+    }
+  }
+
+  // Read pin values for the dial joystick
+  for (int index = 0; index < DIAL_MAX_BUTTONS; index++)
+  {
+    int currentButtonState = !digitalRead(index + dialDigitalInputID);
+    if (currentButtonState != dialLastButtonState[index])
+    {
+      dialJoystick.setButton(index, currentButtonState);
+      dialLastButtonState[index] = currentButtonState;
     }
   }
 
