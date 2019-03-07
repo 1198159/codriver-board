@@ -7,9 +7,9 @@ const unsigned int DIAL_MAX_BUTTONS = 8;
 Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS, 1, true, true, false, false, false, false, false, false, false, false, false);
 Joystick_ dialJoystick(0x04, JOYSTICK_TYPE_JOYSTICK, DIAL_MAX_BUTTONS, 1, false, false, false, false, false, false, false, false, false, false, false);
 
-// Constant for determing which digital input to use.
-const int mainDigitalInputID = 24;
-const int dialDigitalInputID = 6;
+// Arrays for determing which digital inputs each joystick should use.
+int mainDigitalInputs[] = {24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 44};
+const int dialDigitalInputs[] = {6, 7, 8, 9, 10, 11, 12, 13};
 
 // Last state of the button
 int *mainLastButtonState;
@@ -60,11 +60,11 @@ void setup() {
 
   // Initialize button pins
   for(int buttonID = 0; buttonID < MAIN_MAX_BUTTONS; buttonID++) {
-    pinMode(mainDigitalInputID + buttonID, INPUT_PULLUP);
+    pinMode(mainDigitalInputs[buttonID], INPUT_PULLUP);
   }
   
   for(int buttonID = 0; buttonID < DIAL_MAX_BUTTONS; buttonID++) {
-    pinMode(dialDigitalInputID + buttonID, INPUT_PULLUP);
+    pinMode(dialDigitalInputs[buttonID], INPUT_PULLUP);
   }
   Serial.begin(9600);
 }
@@ -101,13 +101,13 @@ void loop() {
   // Read pin values for the main joystick
   for (int index = 0; index < MAIN_MAX_BUTTONS; index++)
   {
-    int currentButtonState = !digitalRead(index + mainDigitalInputID);
+    int currentButtonState = !digitalRead(mainDigitalInputs[index]);
     if (currentButtonState != mainLastButtonState[index])
     {
       mainJoystick.setButton(index, currentButtonState);
       mainLastButtonState[index] = currentButtonState;
-      if (index + mainDigitalInputID >= mainHatDigitalInputID && index + mainDigitalInputID < mainHatDigitalInputID + 8) {
-        mainJoystick.setHatSwitch(0, 45*(mainDigitalInputID + index - mainHatDigitalInputID) + 180);
+      if (mainDigitalInputs[index] >= mainHatDigitalInputID && mainDigitalInputs[index] < mainHatDigitalInputID + 8) {
+        mainJoystick.setHatSwitch(0, 45*(mainDigitalInputs[index] - mainHatDigitalInputID) + 180);
       }
     }
   }
@@ -115,7 +115,7 @@ void loop() {
   // Read pin values for the dial joystick
   for (int index = 0; index < DIAL_MAX_BUTTONS; index++)
   {
-    int currentButtonState = !digitalRead(index + dialDigitalInputID);
+    int currentButtonState = !digitalRead(dialDigitalInputs[index]);
     if (currentButtonState != dialLastButtonState[index])
     {
       dialJoystick.setButton(index, currentButtonState);
