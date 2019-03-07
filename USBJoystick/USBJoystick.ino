@@ -18,7 +18,6 @@ int dialLastButtonState[8] = {0,0,0,0,0,0,0,0};
 // The analog joystick pins.
 int joyPin0 = 0;
 int joyPin1 = 1;
-int median = 606;
 
 // Range values
 int minAxisVal = -32768;
@@ -27,8 +26,8 @@ int maxAxisVal = 32767;
 int minAnalogVal = 0;
 int maxAnalogVal = 1023;
 
-int midAnalogXVal = 700;
-int midAnalogYVal = 530;
+int midAnalogXVal = 574;
+int midAnalogYVal = 547;
 
 // Starting hat digital input ID for the main joystick
 int mainHatDigitalInputID = 33;
@@ -79,11 +78,11 @@ void loop() {
   // put your main code here, to run repeatedly:
   
   // Set the joystick state
-  int rawXAxisData = analogRead(joyPin0);
+  int rawXAxisData = analogRead(joyPin1);
   mainJoystick.setXAxis(analogToStick(rawXAxisData, midAnalogXVal));
 
-  int rawYAxisData = analogRead(joyPin1);
-  mainJoystick.setYAxis(analogToStick(rawYAxisData, midAnalogYVal));
+  int rawYAxisData = analogRead(joyPin0);
+  mainJoystick.setYAxis(-analogToStick(rawYAxisData, midAnalogYVal)-1); // Flips axis and accounts for off by one error.
 
   // Read pin values for the main joystick
   for (int index = 0; index < MAIN_MAX_BUTTONS; index++)
