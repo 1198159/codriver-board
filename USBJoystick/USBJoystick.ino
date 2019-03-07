@@ -12,8 +12,8 @@ const int mainDigitalInputID = 24;
 const int dialDigitalInputID = 6;
 
 // Last state of the button
-int mainLastButtonState[18] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-int dialLastButtonState[8] = {0,0,0,0,0,0,0,0};
+int *mainLastButtonState;
+int *dialLastButtonState;
 
 // The analog joystick pins.
 int joyPin0 = 0;
@@ -35,6 +35,20 @@ int mainHatDigitalInputID = 33;
 void setup() {
   // put your setup code here, to run once:
 
+  // Initialize button state arrays
+  int index;
+  
+  mainLastButtonState = (int*) calloc(MAIN_MAX_BUTTONS, sizeof(int));
+  dialLastButtonState = (int*) calloc(DIAL_MAX_BUTTONS, sizeof(int));
+
+  for(index = 0; index < MAIN_MAX_BUTTONS; index++) {
+    mainLastButtonState[index] = 0;
+  }
+
+  for(index = 0; index < DIAL_MAX_BUTTONS; index++) {
+    dialLastButtonState[index] = 0;
+  }
+  
   // Initialize Joystick Library
   mainJoystick.setXAxisRange(minAxisVal, maxAxisVal);
   mainJoystick.setYAxisRange(minAxisVal, maxAxisVal);
