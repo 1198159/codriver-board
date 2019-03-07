@@ -1,6 +1,6 @@
 #include <Joystick.h>
 
-Joystick_ Joystick(0x03, JOYSTICK_TYPE_JOYSTICK, 20, 2, true, true, false, false, false, false, false, false, false, false, false);
+Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, 20, 2, true, true, false, false, false, false, false, false, false, false, false);
 
 // Constant for determing which digital input to use.
 const int digitalInputID = 22;
@@ -30,9 +30,9 @@ void setup() {
   // put your setup code here, to run once:
 
   // Initialize Joystick Library
-  Joystick.setXAxisRange(minAxisVal, maxAxisVal);
-  Joystick.setYAxisRange(minAxisVal, maxAxisVal);
-  Joystick.begin();
+  mainJoystick.setXAxisRange(minAxisVal, maxAxisVal);
+  mainJoystick.setYAxisRange(minAxisVal, maxAxisVal);
+  mainJoystick.begin();
 
   // Initialize button pins
   for(int buttonID = 0; buttonID < MAX_BUTTONS; buttonID++) {
@@ -65,10 +65,10 @@ void loop() {
   
   // Set the joystick state
   int rawXAxisData = analogRead(joyPin0);
-  Joystick.setXAxis(analogToStick(rawXAxisData, midAnalogXVal));
+  mainJoystick.setXAxis(analogToStick(rawXAxisData, midAnalogXVal));
 
   int rawYAxisData = analogRead(joyPin1);
-  Joystick.setYAxis(analogToStick(rawYAxisData, midAnalogYVal));
+  mainJoystick.setYAxis(analogToStick(rawYAxisData, midAnalogYVal));
 
   // Read pin values
   for (int index = 0; index < MAX_BUTTONS; index++)
@@ -76,7 +76,7 @@ void loop() {
     int currentButtonState = !digitalRead(index + digitalInputID);
     if (currentButtonState != lastButtonState[index])
     {
-      Joystick.setButton(index, currentButtonState);
+      mainJoystick.setButton(index, currentButtonState);
       lastButtonState[index] = currentButtonState;
     }
   }
