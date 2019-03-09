@@ -5,7 +5,7 @@ int mainDigitalInputs[] = {24, 25, 26, 27, 28, 29, 30, 31, 32, 41, 42, 43, 44};
 int dialDigitalInputs[] = {6, 7, 8, 9, 10, 11, 12, 13, 33, 34, 35, 36, 37, 38, 39, 40};
 
 // Arrays for determing which digital USB outputs each joystick should use.
-int mainDigitalOutputs[] = {7, 6, 5, 10, 9, 8, 7, 6, 5, 1, 0, 2, 3};
+int mainDigitalOutputs[] = {6, 5, 4, 9, 8, 7, 6, 5, 4, 1, 0, 2, 3};
 int dialDigitalOutputs[] = {0, 1, 2, 3, 4, 5, 6, 7, 11, 13, 12, 10, 9, 8, 15, 14};
 
 // The USB output the manual dial's first button
@@ -21,7 +21,7 @@ int manualClimbButton = dialDigitalOutputs[10];
 const unsigned int MAIN_MAX_BUTTONS = sizeof(mainDigitalInputs)/sizeof(int);
 const unsigned int DIAL_MAX_BUTTONS = sizeof(dialDigitalInputs)/sizeof(int);
 
-Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS - 2, 0, true, true, false, false, false, false, false, false, false, false, false);
+Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS - 3, 0, true, true, false, false, false, false, false, false, false, false, false);
 Joystick_ dialJoystick(0x04, JOYSTICK_TYPE_JOYSTICK, DIAL_MAX_BUTTONS, 2, false, false, false, false, false, false, false, false, false, false, false);
 
 // Last state of the button
