@@ -117,9 +117,6 @@ void loop() {
     int currentButtonState = !digitalRead(mainDigitalInputs[index]);
     if (currentButtonState != mainLastButtonState[index])
     {
-      if (mainDigitalInputs[index] == climbModeDigitalInput) { // If the climb mode button is pressed, set the manual dial's climb button as well.
-        dialJoystick.setButton(manualClimbButton, currentButtonState);
-      }
       mainJoystick.setButton(mainDigitalOutputs[index], currentButtonState);
       mainLastButtonState[index] = currentButtonState;
     }
@@ -135,12 +132,7 @@ void loop() {
       int hatValue = index;
       if (!digitalRead(climbModeDigitalInput) && manualDialFirstButton <= dialDigitalOutputs[index] && dialDigitalOutputs[index] < manualDialFirstButton + 8) { // If we're changing a value on the manual dial and the climb mode button has been pressed.
         hatValue = 2;
-        if (dialDigitalOutputs[index] == manualClimbButton) { // We've selected the climb button on the manual dial.
-          valueToSet = 1;
-        } else {
-          valueToSet = 0; // Don't set the climb button on the manual dial, let the climb mode button do that.
-          Serial.println("hello, world!");
-        }
+        valueToSet = 0; // Don't set the climb button on the manual dial, let the climb mode button do that.
       }
       dialJoystick.setButton(dialDigitalOutputs[index], valueToSet);
       dialJoystick.setHatSwitch(index >= 8, 45*hatValue + 180);
