@@ -1,46 +1,93 @@
 #include <Joystick.h>
 
-// Arrays for determing which digital inputs each joystick should use.
-int mainDigitalInputs[] = {24, 25, 26, 27, 28, 29, 41, 42, 43, 44};
-int dialDigitalInputs[] = {6, 7, 8, 9, 10, 11, 12, 13, 33, 34, 35, 36, 37, 38, 39, 40};
+//BUTTON PORTS
+
+//CLIMB
+//INPUTS
+const int climbTop = 22;
+const int climbMid = 24;
+const int climbBot = 26;
+
+//OUTPUTS
+const int climbTop_O = 0;
+const int climbMid_O = 1;
+const int climbBot_O = 2;
+//MODES
+const int indexSpit = 23;
+const int climbMode = 25;
+const int manualShooter = 44;
+
+const int indexSpit_O = 3;
+const int climbMode_O = 4;
+const int manualShooter_O = 7;
+
+//INTAKE
+//INPUTS
+const int intakeFront = 34;
+const int intakeBack = 35;
+
+//OUTPUTS
+const int intakeFront_O = 0;
+const int intakeBack_O = 1;
+
+//FIRST VAL IS ON, SECOND IS OFF
+//INPUTS
+const int intakeInOutFront[] = {36, 37};
+const int intakeInOutBack[] = {38, 39};
+
+//OUTPUTS
+const int intakeInOutFront_O[] = {2, 3};
+const int intakeInOutBack_O[] = {4, 5};
+
+//LIFT
+//INPUTS
+const int lift = 40;
+
+//OUTPUTS
+const int lift_O = 6;
+//DIAL
+const int dial = 2;
+//slide
+const int slide = 3;
+
+//CLICKY DIAL
+const int thingy[] = {53, 50, 49, 47, 45, 43};
+const int thingy_O[] = {5,6,7,8,9,10};
+//STICK
+ const int stick[] = {1, 0};
+
+//const 
+// Range values
+const int minAxisVal = -32768;
+const int maxAxisVal = 32767;
+
+const int minAnalogVal = 0;
+const int maxAnalogVal = 1023;
+
+const int midAnalogXVal = 800;
+const int midAnalogYVal = 800;
+const int midAnalogZVal = 511;
+
+//ARRAY OF INPUTS
+const int mainDigitalInputs[] = {climbTop, climbMid, climbBot, indexSpit, climbMode, thingy[0], thingy[1], thingy[2], thingy[3], thingy[4], thingy[5]};
+const int secondaryDigitalInputs[] = {intakeFront, intakeBack, intakeInOutFront[0], intakeInOutFront[1], intakeInOutBack[0], intakeInOutBack[1], lift, manualShooter};
 
 // Arrays for determing which digital USB outputs each joystick should use.
-int mainDigitalOutputs[] = {6, 5, 4, 9, 8, 7, 1, 0, 2, 3};
-int dialDigitalOutputs[] = {0, 1, 2, 3, 4, 5, 6, 7, 11, 13, 12, 10, 9, 8, 15, 14};
+const int mainDigitalOutputs[] = {climbTop_O, climbMid_O, climbBot_O, indexSpit_O, climbMode_O, thingy_O[0], thingy_O[1], thingy_O[2], thingy_O[3], thingy_O[4], thingy_O[5]};
 
-// The USB output the manual dial's first button
-int manualDialFirstButton = 8;
-
-// The climb mode button's digital input ID.
-int climbModeDigitalInput = mainDigitalInputs[12];
-
-// The manual climb button's USB output on the dial.
-int manualClimbButton = dialDigitalOutputs[10];
+const int secondaryDigitalOutputs[] = {intakeFront_O, intakeBack_O, intakeInOutFront_O[0], intakeInOutFront_O[1], intakeInOutBack_O[0], intakeInOutBack_O[1], lift_O, manualShooter_O};
 
 // How many buttons (and digital inputs) we will use.
-const unsigned int MAIN_MAX_BUTTONS = sizeof(mainDigitalInputs)/sizeof(int);
-const unsigned int DIAL_MAX_BUTTONS = sizeof(dialDigitalInputs)/sizeof(int);
+const unsigned int MAIN_MAX_BUTTONS = sizeof(mainDigitalInputs) / sizeof(int);
+const unsigned int SECONDARY_MAX_BUTTONS = sizeof(secondaryDigitalInputs) / sizeof(int);
 
 Joystick_ mainJoystick(0x03, JOYSTICK_TYPE_JOYSTICK, MAIN_MAX_BUTTONS, 0, true, true, false, false, false, false, false, false, false, false, false);
-Joystick_ dialJoystick(0x04, JOYSTICK_TYPE_JOYSTICK, DIAL_MAX_BUTTONS, 2, false, false, false, false, false, false, false, false, false, false, false);
+Joystick_ secondaryJoystick(0x04, JOYSTICK_TYPE_JOYSTICK, SECONDARY_MAX_BUTTONS, 0, true, true, false, false, false, false, false, false, false, false, false);
 
 // Last state of the button
 int *mainLastButtonState;
-int *dialLastButtonState;
 
-// The analog joystick pins.
-int joyPin0 = 0;
-int joyPin1 = 1;
-
-// Range values
-int minAxisVal = -32768;
-int maxAxisVal = 32767;
-
-int minAnalogVal = 0;
-int maxAnalogVal = 1023;
-
-int midAnalogXVal = 574;
-int midAnalogYVal = 547;
+int *secondaryLastButtonState;
 
 // Starting hat digital input ID for the main joystick
 int mainHatDigitalInputID = 33;
@@ -50,34 +97,29 @@ void setup() {
 
   // Initialize button state arrays
   int index;
-  
-  mainLastButtonState = (int*) calloc(MAIN_MAX_BUTTONS, sizeof(int));
-  dialLastButtonState = (int*) calloc(DIAL_MAX_BUTTONS, sizeof(int));
 
-  for(index = 0; index < MAIN_MAX_BUTTONS; index++) {
+  mainLastButtonState = (int*) calloc(MAIN_MAX_BUTTONS, sizeof(int));
+
+  for (index = 0; index < MAIN_MAX_BUTTONS; index++) {
     mainLastButtonState[index] = 0;
   }
-
-  for(index = 0; index < DIAL_MAX_BUTTONS; index++) {
-    dialLastButtonState[index] = 0;
+  for (index = 0; index < SECONDARY_MAX_BUTTONS; index++) {
+    secondaryLastButtonState[index] = 0;
   }
-  
   // Initialize Joystick Library
   mainJoystick.setXAxisRange(minAxisVal, maxAxisVal);
   mainJoystick.setYAxisRange(minAxisVal, maxAxisVal);
+  secondaryJoystick.setXAxisRange(minAxisVal, maxAxisVal);
+  secondaryJoystick.setYAxisRange(minAxisVal, maxAxisVal);
   mainJoystick.begin();
-
-  dialJoystick.setXAxisRange(minAxisVal, maxAxisVal);
-  dialJoystick.setYAxisRange(minAxisVal, maxAxisVal);
-  dialJoystick.begin();
+  secondaryJoystick.begin();
 
   // Initialize button pins
-  for(int buttonID = 0; buttonID < MAIN_MAX_BUTTONS; buttonID++) {
+  for (int buttonID = 0; buttonID < MAIN_MAX_BUTTONS; buttonID++) {
     pinMode(mainDigitalInputs[buttonID], INPUT_PULLUP);
   }
-  
-  for(int buttonID = 0; buttonID < DIAL_MAX_BUTTONS; buttonID++) {
-    pinMode(dialDigitalInputs[buttonID], INPUT_PULLUP);
+  for (int buttonID = 0; buttonID < SECONDARY_MAX_BUTTONS; buttonID++) {
+    pinMode(secondaryDigitalInputs[buttonID], INPUT_PULLUP);
   }
   Serial.begin(9600);
 }
@@ -90,26 +132,32 @@ int convertRange(int data, int a1, int b1, int a2, int b2) {
 // Converts analog data to values for the usb joystick.
 int analogToStick(int rawData, int midVal) {
   int convertedData;
-  if(rawData >= midVal) {
+  if (rawData >= midVal) {
     convertedData = convertRange(rawData, midVal, maxAnalogVal, 0, maxAxisVal);
   } else {
     convertedData = convertRange(rawData, minAnalogVal, midVal, minAxisVal, 0);
   }
-  
-//  Serial.println(rawData);
-//  Serial.println(convertedData);
+
+  //  Serial.println(rawData);
+  //  Serial.println(convertedData);
 
   return convertedData;
 }
 void loop() {
-  // put your main code here, to run repeatedly:
-  
+  Serial.println(analogRead(slide));
   // Set the joystick state
-  int rawXAxisData = analogRead(joyPin1);
+  int rawXAxisData = analogRead(stick[1]);
   mainJoystick.setXAxis(analogToStick(rawXAxisData, midAnalogXVal));
 
-  int rawYAxisData = analogRead(joyPin0);
-  mainJoystick.setYAxis(-analogToStick(rawYAxisData, midAnalogYVal)-1); // Flips axis and accounts for off by one error.
+  int rawYAxisData = analogRead(stick[0]);
+  mainJoystick.setYAxis(-analogToStick(rawYAxisData, midAnalogYVal) - 1); // Flips axis and accounts for off by one error.
+
+    // Set the joystick state
+  int rawZAxisData = analogRead(dial);
+  secondaryJoystick.setXAxis(analogToStick(rawZAxisData, midAnalogZVal));
+
+  int rawZAxisData2 = analogRead(slide);
+  secondaryJoystick.setYAxis(analogToStick(rawZAxisData2, midAnalogZVal));
 
   // Read pin values for the main joystick
   for (int index = 0; index < MAIN_MAX_BUTTONS; index++)
@@ -121,25 +169,14 @@ void loop() {
       mainLastButtonState[index] = currentButtonState;
     }
   }
-
-  // Read pin values for the dial joystick
-  for (int index = 0; index < DIAL_MAX_BUTTONS; index++)
+  for (int index = 0; index < SECONDARY_MAX_BUTTONS; index++)
   {
-    int currentButtonState = !digitalRead(dialDigitalInputs[index]);
-    int valueToSet = currentButtonState;
-    int hatValue = index;
-    
-    if (!digitalRead(climbModeDigitalInput) && manualDialFirstButton <= dialDigitalOutputs[index] && dialDigitalOutputs[index] < manualDialFirstButton + 8) { // If we're changing a value on the manual dial and the climb mode button has been pressed.
-      hatValue = 2;
-      valueToSet = 0; // Don't set the climb button on the manual dial, let the climb mode button do that.
-    } else if (currentButtonState == dialLastButtonState[index]) {
-      continue; // If the button state hasn't changed, don't do anything.
+    int currentButtonState = !digitalRead(secondaryDigitalInputs[index]);
+    if (currentButtonState != secondaryLastButtonState[index])
+    {
+      secondaryJoystick.setButton(secondaryDigitalOutputs[index], currentButtonState);
+      secondaryLastButtonState[index] = currentButtonState;
     }
-
-    dialJoystick.setButton(dialDigitalOutputs[index], valueToSet);
-    dialJoystick.setHatSwitch(index >= 8, 45*hatValue + 180);
-    dialLastButtonState[index] = valueToSet;
   }
-
   delay(50);
 }
