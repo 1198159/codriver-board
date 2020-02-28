@@ -99,7 +99,7 @@ void setup() {
   int index;
 
   mainLastButtonState = (int*) calloc(MAIN_MAX_BUTTONS, sizeof(int));
-
+  secondaryLastButtonState = (int*) calloc(SECONDARY_MAX_BUTTONS, sizeof(int));
   for (index = 0; index < MAIN_MAX_BUTTONS; index++) {
     mainLastButtonState[index] = 0;
   }
